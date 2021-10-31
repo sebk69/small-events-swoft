@@ -1,0 +1,21 @@
+{
+  "name": "sebk/small-events-swoft",
+  "type": "library",
+  "description": "Swoft cross applications events dispatcher and receiver",
+  "license": "GPL-3.0-only",
+  "authors": [
+    {
+      "name": "Sébastien Kus",
+      "email": "seb@small-iceberg.dev"
+    }
+  ],
+  "require": {
+    "swoft/framework": "~2.0.0",
+    "lingxiao/swoft-rabbitmq": "dev-main"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sebk\\SmallEventsSwoft\\": "src/"
+    }
+  }
+}
