@@ -8,31 +8,28 @@
 
 namespace Sebk\SmallEventsSwoft\RabbitMqAdapter;
 
-use Sebk\SmallEventsSwoft\Contract\SmallEventInterface;
 use PhpAmqpLib\Message\AMQPMessage;
+use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerMessageInterface;
 
-class Message
+class Message implements SmallMessageBrokerMessageInterface
 {
-    /**
-     * @var SmallEventInterface
-     */
-    protected $event;
+    /** @var string */
+    protected $content;
 
     /**
-     * Constructor
-     * @param SmallEventInterface $event
+     * @param string $contents
      */
-    public function __construct(SmallEventInterface $event)
+    public function __construct(string $contents)
     {
-        $this->event = $event;
+        $this->content = $contents;
     }
 
     /**
      * Convert message to rabbitmq format
      * @return AMQPMessage
      */
-    public function getRabbitMqMessage(): AMQPMessage
+    public function getMessage()
     {
-        return new AMQPMessage(json_encode($this->event));
+        return new AMQPMessage($this->content);
     }
 }

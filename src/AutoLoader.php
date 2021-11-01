@@ -8,6 +8,9 @@
 
 namespace Sebk\SmallEventsSwoft;
 
+use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
+use Sebk\SmallEventsSwoft\Event\SmallListener;
+use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
 use Swoft\Helper\ComposerJSON;
 use Swoft\SwoftComponent;
 
@@ -24,6 +27,16 @@ class AutoLoader extends SwoftComponent
     public function beans(): array
     {
         return [
+            'smallEvents.listener' => [
+                'class' => SmallListener::class,
+                'messageBroker' => bean(SmallMessageBrokerInterface::class),
+            ],
+            'smallEvents.pool' => [
+                'class'    => SmallEventsPool::class,
+            ],
+            'smallEvents.rabbitMqConfig' => [
+                'class' => \Sebk\SmallEventsSwoft\RabbitMqAdapter\Config::class
+            ],
         ];
     }
 
