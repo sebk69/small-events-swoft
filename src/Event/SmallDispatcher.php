@@ -50,7 +50,6 @@ class SmallDispatcher
         $this->swoftEventManager = $swoftEventManager;
         $this->applicationId = config("smallEvents.applicationId");
         $this->eventQueue = config("smallEvents.eventQueue");
-        $this->messageClass = config("messageBrockerContracts." . SmallMessageBrokerMessageInterface::class);
     }
 
     /**
@@ -74,17 +73,14 @@ class SmallDispatcher
 
     /**
      * Send a message to queue
-     * $content must be a json serializable format
+     * $message must be a json serializable format
      * @param string $queue
      * @param mixed $content
      */
-    public function sendMessage(string $queue, $content)
+    public function sendMessage(string $queue, $message)
     {
-        // Create message
-        $message = new $this->messageClass(json_encode($content));
-
         // Send message
-        $this->sendMessage($this->eventQueue, $message);
+        $this->messageBroker->publish($queue, $message);
     }
 
     /**

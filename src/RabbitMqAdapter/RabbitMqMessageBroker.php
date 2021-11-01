@@ -11,9 +11,10 @@ namespace Sebk\SmallEventsSwoft\RabbitMqAdapter;
 use PhpAmqpLib\Channel\AMQPChannel;
 use Sebk\SmallEventsSwoft\Contract\SmallConsumerInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallEventsConnectionInterface;
+use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
 use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
 
-class RabbitMqMessageBroker
+class RabbitMqMessageBroker implements SmallMessageBrokerInterface
 {
 
     /**
@@ -35,12 +36,31 @@ class RabbitMqMessageBroker
         $this->queues[$queue->getName()] = $queue;
     }
 
+    public function publish(SmallEventsConnectionInterface $connection, string $queue, $content)
+    {
+        // Check compatibility of connection
+        if (!$connection instanceof RabbitMqConnection) {
+            throw new \Exception("Connection must be instance of RabbitMqConnection !");
+        }
+
+        // Get channel
+        /** @var AMQPChannel $channel */
+        $channel = $connection->channel();
+
+        $channel->basic_publish((new Message(json_encode($content)))->getMessage(), $this->queues[$queue]->getExchange()->getName());
+    }
+
     /**
      * Listen to queue
      * @throws \ErrorException
      */
-    public function listen(RabbitMqConnection $connection, $queue, SmallConsumerInterface $consumer)
+    public function listen(SmallEventsConnectionInterface $connection, $queue, SmallConsumerInterface $consumer)
     {
+        // Check compatibility of connection
+        if (!$connection instanceof RabbitMqConnection) {
+            throw new \Exception("Connection must be instance of RabbitMqConnection !");
+        }
+
         // Get channel
         /** @var AMQPChannel $channel */
         $channel = $connection->channel();
@@ -49,7 +69,7 @@ class RabbitMqMessageBroker
         /** @var Exchange $exchange */
         $this->queues[$queue]->declareQueue($channel);
 
-        $channel->basic_consume($queue, config(""), false, false, false, false, [$this, "consume"]);
+        $channel->basic_consume($queue, config("smallEvents.applicationId"), false, false, false, false, [$consumer, "consume"]);
 
         while ($this->channel->is_consuming()) {
             $this->channel->wait();

@@ -10,6 +10,6 @@ namespace Sebk\SmallEventsSwoft\Contract;
 
 interface SmallMessageBrokerInterface
 {
-    public function publish(string $queue, $message);
+    public function publish(SmallEventsConnectionInterface $connection, string $queue, $content);
     public function listen(SmallEventsConnectionInterface $connection, string $queue, SmallConsumerInterface $consumer);
 }
