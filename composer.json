@@ -11,8 +11,8 @@
   ],
   "require": {
     "swoft/framework": "~2.0.0",
-    "lingxiao/swoft-rabbitmq": "dev-main",
-    "swoft/event": "~v2.0.0"
+    "php-amqplib/php-amqplib": "~3.1.0",
+    "swoft/event": "~2.0.0"
   },
   "autoload": {
     "psr-4": {
