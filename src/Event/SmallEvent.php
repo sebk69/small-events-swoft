@@ -18,7 +18,7 @@ class SmallEvent extends Event implements SmallEventInterface, \JsonSerializable
 {
     public function __construct(string $name = '', array $params = [])
     {
-        $params["dateCreation"] = date("Y-m-d H:i:s");
+        $params['dateCreation'] = date('Y-m-d H:i:s');
 
         parent::__construct($name, $params);
 
@@ -32,8 +32,8 @@ class SmallEvent extends Event implements SmallEventInterface, \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            "eventName" => $this->getName(),
-            "params" => $this->params,
+            'eventName' => $this->getName(),
+            'params' => $this->params,
         ];
     }
 }

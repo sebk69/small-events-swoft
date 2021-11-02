@@ -42,12 +42,12 @@ class RabbitMqConnection extends AbstractConnection implements SmallEventsConnec
      */
     public function create(): void
     {
-        $this->client = $this->connection = new AMQPStreamConnection(
-            config("small_events.rabbitMq.host"),
-            config("small_events.rabbitMq.port"),
-            config("small_events.rabbitMq.user"),
-            config("small_events.rabbitMq.password"),
-            config("small_events.rabbitMq.vhost"),
+        $this->client = new AMQPStreamConnection(
+            config('small_events.rabbitMq.host', 'localhost'),
+            config('small_events.rabbitMq.port', 5672),
+            config('small_events.rabbitMq.user', 'guest'),
+            config('small_events.rabbitMq.password', 'guest'),
+            config('small_events.rabbitMq.vhost', '/'),
         );
     }
 

@@ -10,47 +10,13 @@ namespace Sebk\SmallEventsBundle\Event;
 
 use Sebk\SmallEventsSwoft\Contract\SmallEventInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
-use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerMessageInterface;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Event\Manager\EventManagerInterface;
 
 /**
  * @Bean()
  */
 class SmallDispatcher
 {
-    /**
-     * @var SmallMessageBrokerInterface
-     */
-    protected $messageBroker;
-
-    /**
-     * @var EventManagerInterface
-     */
-    protected $swoftEventManager;
-
-    /**
-     * @var string
-     */
-    protected $applicationId;
-
-    /**
-     * @var string
-     */
-    protected $eventQueue;
-
-    /**
-     * SmallDispatcher constructor.
-     * @param SmallMessageBroker $messageBroker
-     * @param EventManagerInterface $local
-     */
-    public function __construct(SmallMessageBrokerInterface $messageBroker, EventManagerInterface $swoftEventManager)
-    {
-        $this->messageBroker = $messageBroker;
-        $this->swoftEventManager = $swoftEventManager;
-        $this->applicationId = config("smallEvents.applicationId");
-        $this->eventQueue = config("smallEvents.eventQueue");
-    }
 
     /**
      * Dispatch event to message broker
@@ -60,13 +26,13 @@ class SmallDispatcher
     {
         // Create data of message
         $content = [
-            "from" => $this->applicationId,
-            "eventName" => $event->getName(),
-            "params" => $event->getParams(),
+            'from' => config('small_events.applicationId'),
+            'eventName' => $event->getName(),
+            'params' => $event->getParams(),
         ];
 
         // Send the message
-        $this->sendMessage($this->eventQueue, $content);
+        $this->sendMessage(Config::EVENT_EXCHANGE . '.' . config("small_events.applicationId"), $content);
 
         // TODO Log event sent
     }
@@ -80,17 +46,7 @@ class SmallDispatcher
     public function sendMessage(string $queue, $message)
     {
         // Send message
-        $this->messageBroker->publish($queue, $message);
-    }
-
-    /**
-     * Publish a message
-     * @param string $queue
-     * @param SmallMessageBrokerMessageInterface $message
-     */
-    protected function publishMessage(string $queue, SmallMessageBrokerMessageInterface $message)
-    {
-        $this->messageBroker->publish($queue, $message->getMessage());
+        Bean(SmallMessageBrokerInterface::class)->publish(Bean('small_events.pool')->getConnection(), $queue, $message);
     }
 
 }

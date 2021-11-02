@@ -69,6 +69,7 @@ class Queue
         int $ticket = null
     ) {
         $this->name = $name;
+        $this->exchange = $exchange;
         $this->passive = $passive;
         $this->durable = $durable;
         $this->exclusive = $exclusive;

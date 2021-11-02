@@ -21,8 +21,7 @@ class SmallEventsPool extends AbstractPool
     /**
      * Default pool
      */
-    public const DEFAULT_POOL = 'smallEvents.pool';
-
+    public const DEFAULT_POOL = 'small_events.pool';
 
     /**
      * Create a new connection
@@ -31,6 +30,9 @@ class SmallEventsPool extends AbstractPool
     public function createConnection(): ConnectionInterface
     {
         $connection = BeanFactory::getBean(SmallEventsConnectionInterface::class);
+        $connection->initialize($this);
+        $connection->create();
+        return $connection;
     }
 
     public function connection()
@@ -51,7 +53,7 @@ class SmallEventsPool extends AbstractPool
 
         // Not instanceof Connection
         if (!$connection instanceof ConnectionInterface) {
-            throw new RabbitException(
+            throw new \Exception(
                 sprintf('%s is not instanceof %s', get_class($connection), ConnectionInterface::class)
             );
         }

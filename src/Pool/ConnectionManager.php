@@ -6,7 +6,7 @@
  * Under GNU GPL V3 licence
  */
 
-namespace Sebk\SmallEventsSwoft\RabbitMqAdapter;
+namespace Sebk\SmallEventsSwoft\Pool;
 
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Swoft\Co;

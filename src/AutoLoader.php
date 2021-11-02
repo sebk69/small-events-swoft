@@ -34,15 +34,11 @@ class AutoLoader extends SwoftComponent
                     'alias' => SmallDispatcher::class,
                 ],
             ],
-            'smallEvents.listener' => [
+            'small_events.listener' => [
                 'class' => SmallListener::class,
-                'messageBroker' => bean(SmallMessageBrokerInterface::class),
             ],
-            'smallEvents.pool' => [
+            'small_events.pool' => [
                 'class'    => SmallEventsPool::class,
-            ],
-            'smallEvents.rabbitMqConfig' => [
-                'class' => \Sebk\SmallEventsSwoft\RabbitMqAdapter\Config::class
             ],
         ];
     }

@@ -17,37 +17,20 @@ use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
 class RabbitMqMessageBroker implements SmallMessageBrokerInterface
 {
 
-    /**
-     * @var Queue[]
-     */
-    protected $queues = [];
-
-    public function __construct()
-    {
-        $this->config = bean("smallEvents.rabbitMqConfig");
-    }
-
-    /**
-     * Add a queue
-     * @param Queue $queue
-     */
-    public function addQueue(Queue $queue)
-    {
-        $this->queues[$queue->getName()] = $queue;
-    }
-
     public function publish(SmallEventsConnectionInterface $connection, string $queue, $content)
     {
         // Check compatibility of connection
         if (!$connection instanceof RabbitMqConnection) {
-            throw new \Exception("Connection must be instance of RabbitMqConnection !");
+            throw new \Exception('Connection must be instance of RabbitMqConnection !');
         }
 
         // Get channel
         /** @var AMQPChannel $channel */
         $channel = $connection->channel();
 
-        $channel->basic_publish((new Message(json_encode($content)))->getMessage(), $this->queues[$queue]->getExchange()->getName());
+        $this->getQueue($queue)->declareQueue($channel);
+
+        $channel->basic_publish((new Message(json_encode($content)))->getMessage(), $this->getQueue($queue)->getExchange()->getName());
     }
 
     /**
@@ -58,7 +41,7 @@ class RabbitMqMessageBroker implements SmallMessageBrokerInterface
     {
         // Check compatibility of connection
         if (!$connection instanceof RabbitMqConnection) {
-            throw new \Exception("Connection must be instance of RabbitMqConnection !");
+            throw new \Exception('Connection must be instance of RabbitMqConnection !');
         }
 
         // Get channel
@@ -66,14 +49,31 @@ class RabbitMqMessageBroker implements SmallMessageBrokerInterface
         $channel = $connection->channel();
 
         // Declare exchange to channel
-        /** @var Exchange $exchange */
-        $this->queues[$queue]->declareQueue($channel);
+        $this->getQueue($queue)->declareQueue($channel);
 
-        $channel->basic_consume($queue, config("smallEvents.applicationId"), false, false, false, false, [$consumer, "consume"]);
+        $channel->basic_consume($this->getQueue($queue)->getName(), config('small_events.applicationId'), false, false, false, false, [$consumer, 'consume']);
 
         while ($this->channel->is_consuming()) {
             $this->channel->wait();
         }
+    }
+
+    /**
+     * Get queue in params
+     * @param string $queueName
+     * @return Queue
+     * @throws \Exception
+     */
+    public function getQueue(string $queueName): Queue
+    {
+        /** @var Queue $queue */
+        foreach (config('small_events.rabbitMq.queues') as $queue) {
+            if ($queue->getName() == $queueName) {
+                return $queue;
+            }
+        }
+
+        throw new \Exception("RabbitMq queue $queueName not defined !");
     }
 
 }

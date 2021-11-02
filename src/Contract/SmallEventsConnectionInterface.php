@@ -8,4 +8,6 @@
 
 namespace Sebk\SmallEventsSwoft\Contract;
 
-interface SmallEventsConnectionInterface {}
+interface SmallEventsConnectionInterface {
+    public function create(): void;
+}

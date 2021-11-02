@@ -27,7 +27,7 @@ class Config extends \Sebk\SmallEventsBundle\Event\Config
     public function getEventsExchange()
     {
         if ($this->eventsExchange === null) {
-            $this->eventsExchange = new Exchange(static::QUEUE_PREFIX, "fanout", false, true, false);
+            $this->eventsExchange = new Exchange(static::QUEUE_PREFIX, 'fanout', false, true, false);
         }
 
         return $this->eventsExchange;

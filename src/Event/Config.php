@@ -10,10 +10,5 @@ namespace Sebk\SmallEventsBundle\Event;
 
 class Config
 {
-    const QUEUE_PREFIX = "smallEvents";
-
-    public static function getSmallEventsQueueName()
-    {
-        return self::QUEUE_PREFIX . "." . config("smallEvents.applicationId");
-    }
+    const EVENT_EXCHANGE = 'smallEvents';
 }

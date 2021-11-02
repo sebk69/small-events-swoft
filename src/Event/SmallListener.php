@@ -12,6 +12,8 @@ use Sebk\SmallEventsBundle\Event\Config;
 use Sebk\SmallEventsSwoft\Contract\SmallConsumerInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
 use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
+use Swoft\Bean\Annotation\Mapping\Bean;
+use Swoft\Bean\Annotation\Mapping\Inject;
 
 /**
  * @Bean()
@@ -24,37 +26,17 @@ class SmallListener
     protected $pool;
 
     /**
-     * @var SmallConsumerInterface[]
-     */
-    protected $consumers = [];
-
-    /**
-     * @var SmallMessageBrokerInterface
-     */
-    protected $messageBroker;
-
-    /**
-     * Add a consumer
-     * @param string $queue
-     * @param SmallConsumerInterface $consumer
-     */
-    public function addConsumer(SmallConsumerInterface $consumer)
-    {
-        $this->consumers[$consumer->getQueueName()] = $consumer;
-    }
-
-    /**
      * listen to a queue
      * If queue is not defined, listen to small events
      */
     public function listen($queue = null)
     {
         if ($queue == null) {
-            $consumer = new SmallEventConsumer(Config::getSmallEventsQueueName());
+            $consumer = new SmallEventConsumer();
         } else {
-            $consumer = $this->consumers[$queue];
+            $consumer = bean("smallConsumers")->get($queue);
         }
 
-        $this->messageBroker->listen($this->pool->getConnection(), $consumer->getQueueName(), $consumer);
+        Bean(SmallMessageBrokerInterface::class)->listen($this->pool->getConnection(), $consumer->getQueueName(), $consumer);
     }
 }
