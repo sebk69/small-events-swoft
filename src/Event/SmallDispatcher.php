@@ -6,7 +6,7 @@
  * Under GNU GPL V3 licence
  */
 
-namespace Sebk\SmallEventsBundle\Event;
+namespace Sebk\SmallEventsSwoft\Event;
 
 use Sebk\SmallEventsSwoft\Contract\SmallEventInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;

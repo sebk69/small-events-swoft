@@ -6,9 +6,8 @@
  * Under GNU GPL V3 licence
  */
 
-namespace Sebk\SmallEventsSwoft\Event;
+namespace Sebk\SmallEventsSwoft\Consumer;
 
-use Sebk\SmallEventsBundle\Consumer\AbstractSmallConsumer;
 use Swoft\Event\Event;
 
 class SmallEventConsumer extends AbstractSmallConsumer

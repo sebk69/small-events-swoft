@@ -6,7 +6,7 @@
  * Under GNU GPL V3 licence
  */
 
-namespace Sebk\SmallEventsBundle\Consumer;
+namespace Sebk\SmallEventsSwoft\Consumer;
 
 use Sebk\SmallEventsSwoft\Contract\SmallConsumerInterface;
 
@@ -25,8 +25,6 @@ abstract class AbstractSmallConsumer implements SmallConsumerInterface
         if (!isset($this->queueName)) {
             throw new \Exception('The queue name have not been set in constructor for consumer ' . static::class);
         }
-
-        bean("smallConsumers")->register($this);
     }
 
     /**

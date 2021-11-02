@@ -8,7 +8,8 @@
 
 namespace Sebk\SmallEventsSwoft;
 
-use Sebk\SmallEventsBundle\Event\SmallDispatcher;
+use Sebk\SmallEventsSwoft\Consumer\ConsumerCollection;
+use Sebk\SmallEventsSwoft\Event\SmallDispatcher;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
 use Sebk\SmallEventsSwoft\Event\SmallListener;
 use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
@@ -34,7 +35,7 @@ class AutoLoader extends SwoftComponent
                     'alias' => SmallDispatcher::class,
                 ],
             ],
-            'small_events.listener' => [
+            'smallListener' => [
                 'class' => SmallListener::class,
             ],
             'small_events.pool' => [

@@ -8,7 +8,7 @@
 
 namespace Sebk\SmallEventsSwoft\RabbitMqAdapter;
 
-class Config extends \Sebk\SmallEventsBundle\Event\Config
+class Config extends \Sebk\SmallEventsSwoft\Event\Config
 {
     /**
      * @var Exchange

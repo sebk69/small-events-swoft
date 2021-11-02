@@ -8,7 +8,8 @@
 
 namespace Sebk\SmallEventsSwoft\Event;
 
-use Sebk\SmallEventsBundle\Event\Config;
+use Sebk\SmallEventsSwoft\Consumer\AbstractSmallConsumer;
+use Sebk\SmallEventsSwoft\Event\Config;
 use Sebk\SmallEventsSwoft\Contract\SmallConsumerInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
 use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
@@ -29,14 +30,32 @@ class SmallListener
      * listen to a queue
      * If queue is not defined, listen to small events
      */
-    public function listen($queue = null)
+    public function listen(string $queue = null)
     {
         if ($queue == null) {
             $consumer = new SmallEventConsumer();
         } else {
-            $consumer = bean("smallConsumers")->get($queue);
+            $consumer = $this->getConsumer($queue);
         }
 
-        Bean(SmallMessageBrokerInterface::class)->listen($this->pool->getConnection(), $consumer->getQueueName(), $consumer);
+        Bean(SmallMessageBrokerInterface::class)->listen(Bean('small_events.pool')->getConnection(), $consumer->getQueueName(), $consumer);
+    }
+
+    /**
+     * Get consumer for queue
+     * @param string $queue
+     * @return AbstractSmallConsumer
+     * @throws \Exception
+     */
+    public function getConsumer(string $queue)
+    {
+        /** @var AbstractSmallConsumer $consumer */
+        foreach (config('small_events.consumers') as $consumer) {
+            if ($consumer->getQueueName() == $queue) {
+                return $consumer;
+            }
+        }
+
+        throw new \Exception("No consumers for queue $queue !");
     }
 }

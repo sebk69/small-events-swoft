@@ -53,8 +53,8 @@ class RabbitMqMessageBroker implements SmallMessageBrokerInterface
 
         $channel->basic_consume($this->getQueue($queue)->getName(), config('small_events.applicationId'), false, false, false, false, [$consumer, 'consume']);
 
-        while ($this->channel->is_consuming()) {
-            $this->channel->wait();
+        while ($channel->is_consuming()) {
+            $channel->wait();
         }
     }
 

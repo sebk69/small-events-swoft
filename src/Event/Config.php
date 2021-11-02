@@ -6,7 +6,7 @@
  * Under GNU GPL V3 licence
  */
 
-namespace Sebk\SmallEventsBundle\Event;
+namespace Sebk\SmallEventsSwoft\Event;
 
 class Config
 {
