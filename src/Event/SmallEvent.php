@@ -16,13 +16,6 @@ use Sebk\SmallEventsSwoft\Contract\SmallEventInterface;
  */
 class SmallEvent extends Event implements SmallEventInterface, \JsonSerializable
 {
-    public function __construct(string $name = '', array $params = [])
-    {
-        parent::__construct($name, $params);
-
-        // TODO small-http-logger
-    }
-
     /**
      * Json serialization (For publish via message broker : Json is interpretable by any microservice in other languages)
      * @return array
