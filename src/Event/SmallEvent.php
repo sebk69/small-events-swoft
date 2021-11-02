@@ -18,8 +18,6 @@ class SmallEvent extends Event implements SmallEventInterface, \JsonSerializable
 {
     public function __construct(string $name = '', array $params = [])
     {
-        $params['dateCreation'] = date('Y-m-d H:i:s');
-
         parent::__construct($name, $params);
 
         // TODO small-http-logger

@@ -9,6 +9,7 @@
 namespace Sebk\SmallEventsSwoft\RabbitMqAdapter;
 
 use PhpAmqpLib\Channel\AMQPChannel;
+use PhpAmqpLib\Message\AMQPMessage;
 use Sebk\SmallEventsSwoft\Contract\SmallConsumerInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallEventsConnectionInterface;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
@@ -16,6 +17,9 @@ use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
 
 class RabbitMqMessageBroker implements SmallMessageBrokerInterface
 {
+
+    /** @var SmallConsumerInterface */
+    private $consumer;
 
     public function publish(SmallEventsConnectionInterface $connection, string $queue, $content)
     {
@@ -35,10 +39,14 @@ class RabbitMqMessageBroker implements SmallMessageBrokerInterface
 
     /**
      * Listen to queue
+     * !!! CAUTION : You can only listen one time by process !!!
      * @throws \ErrorException
      */
     public function listen(SmallEventsConnectionInterface $connection, $queue, SmallConsumerInterface $consumer)
     {
+        // Set consumer
+        $this->consumer = $consumer;
+
         // Check compatibility of connection
         if (!$connection instanceof RabbitMqConnection) {
             throw new \Exception('Connection must be instance of RabbitMqConnection !');
@@ -51,7 +59,7 @@ class RabbitMqMessageBroker implements SmallMessageBrokerInterface
         // Declare exchange to channel
         $this->getQueue($queue)->declareQueue($channel);
 
-        $channel->basic_consume($this->getQueue($queue)->getName(), config('small_events.applicationId'), false, false, false, false, [$consumer, 'consume']);
+        $channel->basic_consume($this->getQueue($queue)->getName(), config('small_events.applicationId'), false, false, false, false, [$this, 'consume']);
 
         while ($channel->is_consuming()) {
             $channel->wait();
@@ -74,6 +82,15 @@ class RabbitMqMessageBroker implements SmallMessageBrokerInterface
         }
 
         throw new \Exception("RabbitMq queue $queueName not defined !");
+    }
+
+    /**
+     * Decode AMQP message and call consumer
+     * @param AMQPMessage $message
+     */
+    public function consume(AMQPMessage $message)
+    {
+        $this->consumer->consume($message->getBody());
     }
 
 }

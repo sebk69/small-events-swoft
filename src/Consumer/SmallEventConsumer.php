@@ -8,6 +8,7 @@
 
 namespace Sebk\SmallEventsSwoft\Consumer;
 
+use Sebk\SmallEventsSwoft\Event\Config;
 use Swoft\Event\Event;
 
 class SmallEventConsumer extends AbstractSmallConsumer
@@ -19,7 +20,7 @@ class SmallEventConsumer extends AbstractSmallConsumer
      */
     public function __construct()
     {
-        $this->queueName = Config::EVENT_EXCHANGE . config("small_events.applicationId");
+        $this->queueName = Config::EVENT_EXCHANGE . '.' . config("small_events.applicationId");
 
         parent::__construct();
     }
@@ -31,17 +32,14 @@ class SmallEventConsumer extends AbstractSmallConsumer
      */
     public function consume($messageContent): bool
     {
-        // Get Swoft event manager
-        $swoftEventManager = bean('eventManager');
-
         // decode message
-        $data = json_decode($messageContent);
+        $data = json_decode($messageContent, true);
 
         // Create Swoft event
         $event = new Event($data['eventName'], $data['params']);
 
         // Dispatch Swoft event
-        $swoftEventManager->triggerEvent($event);
+        \Swoft::trigger($event->getName(), $event->getTarget(), $data['params']);
 
         // Ack message
         return true;

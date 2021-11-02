@@ -9,12 +9,10 @@
 namespace Sebk\SmallEventsSwoft\Event;
 
 use Sebk\SmallEventsSwoft\Consumer\AbstractSmallConsumer;
-use Sebk\SmallEventsSwoft\Event\Config;
-use Sebk\SmallEventsSwoft\Contract\SmallConsumerInterface;
+use Sebk\SmallEventsSwoft\Consumer\SmallEventConsumer;
 use Sebk\SmallEventsSwoft\Contract\SmallMessageBrokerInterface;
 use Sebk\SmallEventsSwoft\Pool\SmallEventsPool;
 use Swoft\Bean\Annotation\Mapping\Bean;
-use Swoft\Bean\Annotation\Mapping\Inject;
 
 /**
  * @Bean()

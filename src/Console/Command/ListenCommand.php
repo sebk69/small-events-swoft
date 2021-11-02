@@ -30,7 +30,10 @@ class ListenCommand
      */
     public function listen(): void
     {
-        $queueName = input()->getOption('queue', null);
+        $queueName = input()->getOption('queue');
+
+        output()->writeln(date('Y-m-d H:i:s') . ' : Start listening at ' . ($queueName != null ? "queue $queueName" : 'events queue') . '...');
+
         bean("smallListener")->listen($queueName);
     }
 
